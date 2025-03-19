@@ -1,5 +1,10 @@
+FROM maven:3.8.6-openjdk-17 AS build
+WORKDIR /app
+COPY . .
+RUN mvn clean package -DskipTests
+
 FROM openjdk:17-jdk-slim
-ARG  JAR_FILE=target/gasolinera-0.0.1.jar
-COPY ${JAR_FILE} app.jar
+WORKDIR /app
+COPY --from=build /app/target/gasolinera-0.0.1.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","app.jar"]
